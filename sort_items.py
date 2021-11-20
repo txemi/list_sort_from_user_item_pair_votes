@@ -13,8 +13,8 @@ from user_questions import UserVoteUiMaker, VoteUndecidedException
 
 @typeguard.typechecked
 class SortStrategy(enum.Enum):
-    Simple = enum.auto()
-    Advanced = enum.auto()
+    Random = enum.auto()
+    PrioritizeCertainty = enum.auto()
 
 
 @typeguard.typechecked
@@ -29,7 +29,7 @@ def sort_items_from_csv(filename: str, mode: SortStrategy):
             raise NotImplementedError()
         return user_vote_ui_maker.cmp_query_cache_or_ask_user_implementation(item1, item2)
 
-    if mode == SortStrategy.Simple:
+    if mode == SortStrategy.Random:
         sorted_dict = sorted(items.get_wrapped_items_randomized(), key=functools.cmp_to_key(cmp_implementation_func),
                              reverse=True)
         return sorted_dict
