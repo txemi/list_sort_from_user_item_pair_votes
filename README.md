@@ -31,6 +31,9 @@ This development convert this hard task for humans to a sequence of simple decis
 * As vote history is stored script will ask first about items with less uncertainty in order to reach bigger and more useful sorted list as soon as possible (with less votes asked to user)
 * You will see a lot of logging on screen, but you can ignore and center on answering vote questions, as result is stored on your current directory on each iteration.
 
+## TODO
+* input CSV improvements: better autodetection of ID and item description, perhaps passing as argument
+
 That's all!
 
 Thanks
