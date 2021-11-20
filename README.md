@@ -5,7 +5,7 @@ https://github.com/txemi/list_sort_from_user_item_pair_votes
 
 ## ABSTRACT
 
-This project is a tool for helping in sorting list of items (personal todo list, project backlog, list of movies, cooking recipes...) by some criteria (urgency, priority, affinity, rank of alignment to some concept...) taking care of mechanical part (algorithm and mechanics) and asking you throug UI for simple subjective questions (votes on pair of elements).
+This project is a tool for helping in sorting lists of items (personal todo list, project backlog, list of movies, cooking recipes...) by some criteria (urgency, priority, affinity, rank of alignment to some concept...) taking care of mechanical part (algorithm and mechanics) and asking you throug UI for simple subjective questions (votes on pair of elements).
 
 ## MOTIVATION
 
