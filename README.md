@@ -17,7 +17,7 @@ The first is hard and error prone, human will not be methodical, maintain attent
 
 The second suffers from same problems, your criteria can change as time pass and you will finish making judgements at the end in a different way you started.
 
-This development convert this hard task for humans to a sequence of simple decisions as single votes among two elements that you can pause and resume as you wish.
+This script convert this hard task for humans to a sequence of simple decisions as single votes among two elements that you can pause and resume as you wish.
 
 ## HOW IT WORKS
 
