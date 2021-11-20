@@ -21,7 +21,7 @@ This script convert this hard task for humans to a sequence of simple decisions 
 
 ## HOW IT WORKS
 
-* You place the list in a csv in the same dir as code. You can replace the movie example file provided with code. You can also use other folder if you later exec script referencing its correct location and mantaining working directory where data files rest.
+* You place the list in a csv in the same dir as code. You can replace the movie example file provided with code. You can also use other folder if you later exec script referencing its correct location (main.py) and mantaining working directory where data files rest.
 * Then you run main.py
 * The script loads items
 * It will start making simple questions to user: "which of this two elements do you rank more?"
