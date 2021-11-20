@@ -34,7 +34,7 @@ This script convert this hard task for humans to a sequence of simple decisions 
 ## TODO
 * input CSV improvements: better autodetection of ID and item description, perhaps passing as argument
 * Some renaming (items.csv.out.csv...)
-* Some certainty and conflict stats on out.csv
+* Some certainty and conflicting votes stats on out.csv
 
 That's all!
 
