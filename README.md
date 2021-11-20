@@ -26,13 +26,14 @@ This script convert this hard task for humans to a sequence of simple decisions 
 * The script loads items from items.csv
 * It will start making simple questions to user: "which of this two elements do you rank more?"
 * You answer 1, 2 or n depending if you assing higher rank to first, second or cannot decide.
-* On each iteration script will build a bigger sorted list with new elements
+* On each iteration script will build a bigger sorted list with new elements (continuously saved to items.csv.out.csv as votes are saved to items.csv.votes.csv)
 * If you interrumpt the script and start again it will be able to recover as votes are stored in pickle and csv files on current folder (you could need to delete pickle file if you modify script code and something fails)
 * As vote history is stored script will ask first about items with less uncertainty in order to reach bigger and more useful sorted list as soon as possible (with less votes asked to user)
 * You will see a lot of logging on screen, but you can ignore and center on answering vote questions, as result is stored on your current directory on each iteration.
 
 ## TODO
 * input CSV improvements: better autodetection of ID and item description, perhaps passing as argument
+* Some renaming (items.csv.out.csv...)
 
 That's all!
 
