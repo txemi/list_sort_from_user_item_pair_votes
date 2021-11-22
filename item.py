@@ -1,5 +1,7 @@
 import typeguard
 
+from common_utils import common_repr
+
 
 class MainFields:
 
@@ -8,6 +10,7 @@ class MainFields:
         self.description = description
 
 
+# TODO: find more elegant way to inject behaviour
 cmp_imp = None
 
 
@@ -41,10 +44,7 @@ class ItemWrapper:
         return MainFields(self.get_id(), self.format_description())
 
     def __repr__(self):
-        type_ = type(self)
-        module = type_.__module__
-        qualname = type_.__qualname__
-        return f"<{module}.{qualname} {self.format_short()} object at {hex(id(self))}>"
+        return common_repr(self, f"{self.format_short()}")
 
     def match_id(self, item_id):
         if self.get_id() == item_id:
@@ -53,3 +53,6 @@ class ItemWrapper:
 
     def get_data(self):
         return self.__data
+
+    def update(self, key, value):
+        self.__data[key] = value

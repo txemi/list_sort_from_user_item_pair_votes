@@ -70,19 +70,21 @@ class VotesCache:
 
         return items - have_unknown, have_unknown
 
+    def get_item_uncertainty(self, item1: ItemWrapper):
+        return sum(1 for vote in self.__votes.values() if vote.contains_item_id(item1.get_id()) and vote.is_uncertain())
+
+    def get_item_certainty(self, item1: ItemWrapper):
+        return sum(1 for vote in self.__votes.values() if vote.contains_item_id(item1.get_id()) and vote.is_certain())
+
     def items_certainty_rank_comparator_lt(self, item1: ItemWrapper, item2: ItemWrapper):
-        item1_un = sum(
-            1 for vote in self.__votes.values() if vote.contains_item_id(item1.get_id()) and vote.is_uncertain())
-        item2_un = sum(
-            1 for vote in self.__votes.values() if vote.contains_item_id(item2.get_id()) and vote.is_uncertain())
+        item1_un = self.get_item_uncertainty(item1)
+        item2_un = self.get_item_uncertainty(item2)
         if item1_un > item2_un:
             return True
         if item2_un > item1_un:
             return False
-        item1_cer = sum(
-            1 for vote in self.__votes.values() if vote.contains_item_id(item1.get_id()) and vote.is_certain())
-        item2_cer = sum(
-            1 for vote in self.__votes.values() if vote.contains_item_id(item2.get_id()) and vote.is_certain())
+        item1_cer = self.get_item_certainty(item1)
+        item2_cer = self.get_item_certainty(item2)
         if item1_cer < item2_cer:
             return True
         if item1_cer > item2_cer:
@@ -90,18 +92,14 @@ class VotesCache:
         return False
 
     def items_certainty_rank_comparator(self, item1: ItemWrapper, item2: ItemWrapper):
-        item1_un = sum(
-            1 for vote in self.__votes.values() if vote.contains_item_id(item1.get_id()) and vote.is_uncertain())
-        item2_un = sum(
-            1 for vote in self.__votes.values() if vote.contains_item_id(item2.get_id()) and vote.is_uncertain())
+        item1_un = self.get_item_uncertainty(item1)
+        item2_un = self.get_item_uncertainty(item2)
         if item1_un > item2_un:
             return -1
         if item1_un < item2_un:
             return 1
-        item1_cer = sum(
-            1 for vote in self.__votes.values() if vote.contains_item_id(item1.get_id()) and vote.is_certain())
-        item2_cer = sum(
-            1 for vote in self.__votes.values() if vote.contains_item_id(item2.get_id()) and vote.is_certain())
+        item1_cer = self.get_item_certainty(item1)
+        item2_cer = self.get_item_certainty(item2)
         if item1_cer < item2_cer:
             return -1
         if item1_cer > item2_cer:
@@ -157,9 +155,19 @@ class VotesCache:
     def __repr__(self):
         return common_repr(f"{len(self.__votes)} elements")
 
-    def find_votes_not_matching_list(self, items):
-        not_matches=[]
+    def find_votes_not_matching_list(self, items: Items):
+        not_matches = []
         for vote in self.__votes.values():
             if not vote.matches_list(items):
                 not_matches.append(vote)
         return not_matches
+
+    def enrich_items_with_stats(self, items: Items):
+        votes_not_matching = self.find_votes_not_matching_list(items)
+        for item in items.get_wrapped_items():
+            cer = self.get_item_certainty(item)
+            un = self.get_item_uncertainty(item)
+            for vnm in votes_not_matching:
+                raise NotImplementedError()
+            item.update("cer", cer)
+            item.update("un", un)

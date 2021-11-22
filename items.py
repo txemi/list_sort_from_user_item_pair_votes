@@ -61,7 +61,7 @@ def _guess_id_field(rows: list[dict]):
 @typeguard.typechecked
 class Items:
 
-    def __init__(self, filename, load_csv=True):
+    def __init__(self, filename: str, load_csv: bool = True):
         self.__filename = filename
         if load_csv and os.path.exists(filename):
             rows = list(_read_csv(filename))
@@ -78,14 +78,14 @@ class Items:
         return self.__wrapped_items
 
     def get_item_by_id(self, item_id: int):
-        for a in self.__wrapped_items:
-            if a.get_id() == item_id:
-                return a
+        for wrapped_item in self.__wrapped_items:
+            if wrapped_item.get_id() == item_id:
+                return wrapped_item
         raise NotImplementedError()
 
     def format(self):
-        aaa = map(lambda x: x.format_short(), self.__wrapped_items)
-        return '\n'.join(aaa)
+        items_formatted = map(lambda x: x.format_short(), self.__wrapped_items)
+        return '\n'.join(items_formatted)
 
     def print(self):
         logging.debug("{} begin {} elements".format(self.__class__.__name__, len(self.__wrapped_items)))
@@ -110,7 +110,10 @@ class Items:
             writer.writeheader()
             for row in self.__wrapped_items:
                 assert isinstance(row, ItemWrapper)
-                writer.writerow(row.get_data())
+                try:
+                    writer.writerow(row.get_data())
+                except:
+                    raise
 
     def get_items(self):
         return self.get_wrapped_items()
