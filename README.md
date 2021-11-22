@@ -32,7 +32,6 @@ This script convert this hard task for humans to a sequence of simple decisions 
 * You will see a lot of logging on screen, but you can ignore and center on answering vote questions, as result is stored on your current directory on each iteration.
 
 ## TODO
-* input CSV improvements: better autodetection of ID and item description, perhaps passing as argument
 * Some renaming (items.csv.out.csv...)
 * Some certainty and conflicting votes stats on out.csv
 
