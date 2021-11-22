@@ -13,8 +13,9 @@ cmp_imp = None
 
 @typeguard.typechecked
 class ItemWrapper:
-    def __init__(self, item_data: dict):
+    def __init__(self, item_data: dict, id_field: str):
         self.__data = item_data
+        self.__id_field_name = id_field
 
     def format_description(self):
         # TODO: guess description
@@ -34,13 +35,7 @@ class ItemWrapper:
         return cmp_imp(self, other)
 
     def get_id(self):
-        # TODO: guess id
-        if "id" in self.__data:
-            return int(self.__data.get("id"))
-        if "Const" in self.__data:
-            a = self.__data.get("Const")
-            return int(a)
-        raise NotImplementedError()
+        return int(self.__data.get(self.__id_field_name))
 
     def get_main_fields(self) -> MainFields:
         return MainFields(self.get_id(), self.format_description())
