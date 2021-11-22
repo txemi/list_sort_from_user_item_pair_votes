@@ -11,6 +11,7 @@ from item import ItemWrapper
 
 @typeguard.typechecked
 def guess_file_encoding(filename: str):
+    # testing autodetection; before: encoding='utf-8'
     with open(filename, 'rb') as rawdata:
         result = chardet.detect(rawdata.read(10000))
 
@@ -20,8 +21,7 @@ def guess_file_encoding(filename: str):
 
 
 @typeguard.typechecked
-def read_csv(filename: str):
-    # testing autodetection; before: encoding='utf-8'
+def _read_csv(filename: str):
     with open(filename, mode='r', encoding=guess_file_encoding(filename)) as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
@@ -30,7 +30,7 @@ def read_csv(filename: str):
 
 @typeguard.typechecked
 def read_csv_random(filename: str):
-    c = list(read_csv(filename))
+    c = list(_read_csv(filename))
     if c is None:
         raise Exception()
     random.shuffle(c)
@@ -39,11 +39,33 @@ def read_csv_random(filename: str):
 
 
 @typeguard.typechecked
+def _guess_id_field(rows: list[dict]):
+    assert isinstance(rows, list)
+    first_row = rows[0]
+    assert isinstance(first_row, dict)
+    keys = []
+    for key_in_row in first_row:
+        row_values = [row[key_in_row] for row in rows]
+        key_can_be_id = all([value is not None and value.isdigit() for value in row_values])
+        if key_can_be_id and len(set(row_values)) == len(row_values):
+            keys.append(key_in_row)
+    if len(keys) == 1:
+        return keys[0]
+    for preferred in "id", "Const":
+        for key in keys:
+            if preferred in key:
+                return key
+    return keys[0]
+
+
+@typeguard.typechecked
 class Items:
+
     def __init__(self, filename, load_csv=True):
         self.__filename = filename
         if load_csv and os.path.exists(filename):
-            self.__wrapped_items = list(map(lambda x: ItemWrapper(x), list(read_csv(filename))))
+            rows = list(_read_csv(filename))
+            self.__wrapped_items = list(map(lambda x: ItemWrapper(x, _guess_id_field(rows)), rows))
         else:
             self.__wrapped_items = []
 
