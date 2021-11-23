@@ -62,10 +62,10 @@ def sort_items_from_csv(filename: str, mode: SortStrategy):
             logging.debug("After insort: {}".format(sorted_list))
             sorted_list.write_csv()
             not_matching = user_vote_ui_maker.find_votes_not_matching_list(sorted_list)
-            if not_matching:
-                logging.warning(f"found {len(not_matching)} not matching votes")
+            logging.warning(f"found {len(not_matching)} not matching votes")
         user_vote_ui_maker.get_votes().enrich_items_with_stats(sorted_list)
         sorted_list.write_csv()
+        logging.warning(f"found {len(not_matching)} not matching votes")
         return sorted_list
 
 
