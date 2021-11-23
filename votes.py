@@ -171,3 +171,9 @@ class VotesCache:
                 raise NotImplementedError()
             item.update("cer", cer)
             item.update("un", un)
+
+    def has_certain_vote(self, item1, item2):
+        found_in_cache = self.get(item1, item2)
+        if found_in_cache is not None:
+            return True
+        return False

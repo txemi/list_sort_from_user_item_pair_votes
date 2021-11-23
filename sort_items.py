@@ -5,6 +5,7 @@ import logging
 
 import typeguard
 
+import bisect_fork
 import item as item_package
 from item import ItemWrapper
 from items import Items
@@ -15,6 +16,7 @@ from user_questions import UserVoteUiMaker, VoteUndecidedException
 class SortStrategy(enum.Enum):
     Random = enum.auto()
     PrioritizeCertainty = enum.auto()
+    PrioritizeCertaintyCertainMidFirst = enum.auto()
 
 
 @typeguard.typechecked
@@ -40,7 +42,23 @@ def sort_items_from_csv(filename: str, mode: SortStrategy):
         items_prioritized.reverse()
         for next_element in items_prioritized:
             logging.debug("Before insort: {}".format(sorted_list))
-            bisect.insort(sorted_list.get_items(), next_element)
+            if mode == SortStrategy.PrioritizeCertainty:
+                bisect.insort(sorted_list.get_items(), next_element)
+            else:
+                def mid_func_imp(a, lo, hi):
+                    mid = (lo + hi) // 2
+                    if len(a) <= 5:
+                        return mid
+                    for inc in range((hi - lo) // 2):
+                        for inc2 in (-1, 1):
+                            alternativemid = mid + inc * inc2
+                            assert alternativemid > lo
+                            assert alternativemid < hi
+                            if user_vote_ui_maker.get_votes().has_certain_vote(next_element, a[alternativemid]):
+                                return alternativemid
+                    return mid
+
+                bisect_fork.insort(sorted_list.get_items(), next_element, mid_func=mid_func_imp)
             logging.debug("After insort: {}".format(sorted_list))
             sorted_list.write_csv()
             not_matching = user_vote_ui_maker.find_votes_not_matching_list(sorted_list)

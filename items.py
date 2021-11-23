@@ -30,12 +30,12 @@ def _read_csv(filename: str):
 
 @typeguard.typechecked
 def read_csv_random(filename: str):
-    c = list(_read_csv(filename))
-    if c is None:
+    csv_items = list(_read_csv(filename))
+    if csv_items is None:
         raise Exception()
-    random.shuffle(c)
-    for a in c:
-        yield a
+    random.shuffle(csv_items)
+    for randomized_item in csv_items:
+        yield randomized_item
 
 
 @typeguard.typechecked

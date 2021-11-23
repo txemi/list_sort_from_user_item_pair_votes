@@ -118,3 +118,5 @@ class UserVoteUiMaker:
 
     def get_votes(self):
         return self.__votes
+
+
