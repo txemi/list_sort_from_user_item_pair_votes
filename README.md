@@ -33,9 +33,8 @@ This script convert this hard task for humans to a sequence of simple decisions 
 
 ## TODO
 * Some renaming (items.csv.out.csv...)
-* Some certainty and conflicting votes stats on out.csv
+* Some conflicting votes stats on out.csv
 * guess description format from fields
-* IMPORTANT (high optimization): modify defaul sort algorithm to choose pivot elements from elements with known votes.
 
 That's all!
 
