@@ -12,7 +12,7 @@ def insort_right_1(a, x, lo=0, hi=None, *, key=None, mid_func=None):
     if key is None:
         lo = bisect_right_1(a, x, lo, hi, mid_func=mid_func)
     else:
-        lo = bisect_right(a, key(x), lo, hi, key=key)
+        lo = bisect_right_1(a, key(x), lo, hi, key=key)
     a.insert(lo, x)
 
 
@@ -79,29 +79,16 @@ def bisect_left(a, x, lo=0, hi=None, *, key=None):
         hi = len(a)
     # Note, the comparison uses "<" to match the
     # __lt__() logic in list.sort() and in heapq.
-    if key is None:
-        while lo < hi:
-            mid = (lo + hi) // 2
-            if a[mid] < x:
-                lo = mid + 1
-            else:
-                hi = mid
-    else:
-        while lo < hi:
-            mid = (lo + hi) // 2
-            if key(a[mid]) < x:
-                lo = mid + 1
-            else:
-                hi = mid
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if (a[mid] if key is None else key(a[mid])) < x:
+            lo = mid + 1
+        else:
+            hi = mid
+
     return lo
 
 
-# Overwrite above definitions with a fast C implementation
-try:
-    from _bisect import *
-except ImportError:
-    pass
-
 # Create aliases
-bisect = bisect_right
+bisect = bisect_right_1
 insort = insort_right_1
