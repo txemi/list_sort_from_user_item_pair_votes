@@ -33,7 +33,7 @@ def sort_items_from_csv(filename: str, mode: SortStrategy):
         sorted_dict = sorted(items.get_wrapped_items_randomized(), key=functools.cmp_to_key(cmp_implementation_func),
                              reverse=True)
         return sorted_dict
-    else:
+    elif mode == SortStrategy.Advanced:
         sorted_list = Items(filename + ".out.csv", load_csv=False)
         items_prioritized = user_vote_ui_maker.get_items_sorted_by_certainty()
         item_package.cmp_imp = cmp_implementation_func
@@ -47,6 +47,8 @@ def sort_items_from_csv(filename: str, mode: SortStrategy):
             if not_matching:
                 logging.warning(f"found {len(not_matching)} not matching votes")
         return sorted_list
+    else:
+        raise NotImplementedError()
 
 
 @typeguard.typechecked
