@@ -20,7 +20,7 @@ class SortStrategy(enum.Enum):
 
 
 @typeguard.typechecked
-def sort_items_from_csv(filename: str, mode: SortStrategy):
+def sort_items_from_csv(filename: str, mode: SortStrategy = SortStrategy.PrioritizeCertaintyCertainMidFirst):
     items = Items(filename)
     items.print()
     user_vote_ui_maker = UserVoteUiMaker(filename + ".votes", items)
@@ -35,7 +35,7 @@ def sort_items_from_csv(filename: str, mode: SortStrategy):
         sorted_dict = sorted(items.get_wrapped_items_randomized(), key=functools.cmp_to_key(cmp_implementation_func),
                              reverse=True)
         return sorted_dict
-    elif mode == SortStrategy.Advanced:
+    elif mode == SortStrategy.PrioritizeCertainty or mode == SortStrategy.PrioritizeCertaintyCertainMidFirst:
         sorted_list = Items(filename + ".out.csv", load_csv=False)
         items_prioritized = user_vote_ui_maker.get_items_sorted_by_certainty()
         item_package.cmp_imp = cmp_implementation_func
