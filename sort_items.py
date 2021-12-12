@@ -5,6 +5,7 @@ import logging
 
 import typeguard
 
+import bisect_fork
 import item as item_package
 from item import ItemWrapper
 from items import Items
@@ -13,8 +14,9 @@ from user_questions import UserVoteUiMaker, VoteUndecidedException
 
 @typeguard.typechecked
 class SortStrategy(enum.Enum):
-    Simple = enum.auto()
-    Advanced = enum.auto()
+    Random = enum.auto()
+    PrioritizeCertainty = enum.auto()
+    PrioritizeCertaintyCertainMidFirst = enum.auto()
 
 
 @typeguard.typechecked
@@ -29,7 +31,7 @@ def sort_items_from_csv(filename: str, mode: SortStrategy):
             raise NotImplementedError()
         return user_vote_ui_maker.cmp_query_cache_or_ask_user_implementation(item1, item2)
 
-    if mode == SortStrategy.Simple:
+    if mode == SortStrategy.Random:
         sorted_dict = sorted(items.get_wrapped_items_randomized(), key=functools.cmp_to_key(cmp_implementation_func),
                              reverse=True)
         return sorted_dict
@@ -40,12 +42,30 @@ def sort_items_from_csv(filename: str, mode: SortStrategy):
         items_prioritized.reverse()
         for next_element in items_prioritized:
             logging.debug("Before insort: {}".format(sorted_list))
-            bisect.insort(sorted_list.get_items(), next_element)
+            if mode == SortStrategy.PrioritizeCertainty:
+                bisect.insort(sorted_list.get_items(), next_element)
+            else:
+                def mid_func_imp(a, lo, hi):
+                    mid = (lo + hi) // 2
+                    if len(a) <= 5:
+                        return mid
+                    for inc in range((hi - lo) // 2):
+                        for inc2 in (-1, 1):
+                            alternativemid = mid + inc * inc2
+                            assert alternativemid > lo
+                            assert alternativemid < hi
+                            if user_vote_ui_maker.get_votes().has_certain_vote(next_element, a[alternativemid]):
+                                return alternativemid
+                    return mid
+
+                bisect_fork.insort(sorted_list.get_items(), next_element, mid_func=mid_func_imp)
             logging.debug("After insort: {}".format(sorted_list))
             sorted_list.write_csv()
-            not_matching = user_vote_ui_maker.find_votes_not_matching_list(sorted_list.get_items())
-            if not_matching:
-                logging.warning(f"found {len(not_matching)} not matching votes")
+            not_matching = user_vote_ui_maker.find_votes_not_matching_list(sorted_list)
+            logging.warning(f"found {len(not_matching)} not matching votes")
+        user_vote_ui_maker.get_votes().enrich_items_with_stats(sorted_list)
+        sorted_list.write_csv()
+        logging.warning(f"found {len(not_matching)} not matching votes")
         return sorted_list
     else:
         raise NotImplementedError()
