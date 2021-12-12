@@ -1,41 +1,11 @@
-import csv
 import logging
 import os
 import random
 
-import chardet
 import typeguard
 
 from item import ItemWrapper
-
-
-@typeguard.typechecked
-def guess_file_encoding(filename: str):
-    # testing autodetection; before: encoding='utf-8'
-    with open(filename, 'rb') as rawdata:
-        result = chardet.detect(rawdata.read(10000))
-
-    encoding = result["encoding"]
-
-    return encoding
-
-
-@typeguard.typechecked
-def _read_csv(filename: str):
-    with open(filename, mode='r', encoding=guess_file_encoding(filename)) as csv_file:
-        csv_reader = csv.DictReader(csv_file)
-        for row in csv_reader:
-            yield row
-
-
-@typeguard.typechecked
-def read_csv_random(filename: str):
-    csv_items = list(_read_csv(filename))
-    if csv_items is None:
-        raise Exception()
-    random.shuffle(csv_items)
-    for randomized_item in csv_items:
-        yield randomized_item
+from list_sort_from_user_item_pair_votes.csv_helper import _read_csv, write_csv_1
 
 
 @typeguard.typechecked
@@ -105,15 +75,11 @@ class Items:
         return data.keys()
 
     def write_csv(self):
-        with open(self.__filename, mode='w', encoding='utf-8', newline='') as csv_file:
-            writer = csv.DictWriter(csv_file, fieldnames=self.get_field_names())
-            writer.writeheader()
-            for row in self.__wrapped_items:
-                assert isinstance(row, ItemWrapper)
-                try:
-                    writer.writerow(row.get_data())
-                except:
-                    raise
+        def temp(row):
+            assert isinstance(row, ItemWrapper)
+            return row.get_data()
+
+        write_csv_1(self.__filename, self.get_field_names(), [temp(row) for row in self.__wrapped_items])
 
     def get_items(self):
         return self.get_wrapped_items()
